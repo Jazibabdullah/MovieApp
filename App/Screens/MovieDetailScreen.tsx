@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   View,
@@ -9,6 +9,7 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -29,32 +30,45 @@ const MovieDetailScreen = () => {
   const {movie} = route.params;
   const movieId = movie.id;
 
+  // State to manage image loading
+  const [imageLoading, setImageLoading] = useState(true);
+
   // Selectors for Redux state
   const {movieDetails, movieImages, loading, error} = useSelector(
     state => state.movie,
   );
 
-  // Memoize image URI calculation
-  const imageUri = useMemo(() => {
-    return movieImages.length > 0
+  // Determine image URI
+  const imageUri =
+    movieImages.length > 0
       ? `${BASE_IMAGE_URL}${movieImages[0].file_path}` // Use the first backdrop image
       : 'https://via.placeholder.com/300';
-  }, [movieImages]);
 
   // Fetch data on component mount
   useEffect(() => {
-    dispatch(fetchMovieDetails(movieId));
-    dispatch(fetchMovieImages(movieId));
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchMovieDetails(movieId)); // Fetch movie details
+        await dispatch(fetchMovieImages(movieId)); // Fetch movie images
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setImageLoading(false); // Stop loading after both requests complete
+      }
+    };
+
+    fetchData();
   }, [dispatch, movieId]);
 
   const handleWatchTrailer = () => {
     dispatch(fetchMovieTrailer(movieId));
     navigation.navigate('VideoPlayer');
   };
+
   const handleTicketSection = () => {
-    dispatch(fetchMovieTrailer(movieId));
     navigation.navigate('TicketSelection');
   };
+
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -64,21 +78,34 @@ const MovieDetailScreen = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ImageBackground source={{uri: imageUri}} style={styles.movieImage}>
-        <TopBar navigation={navigation} />
-        <LinearGradient
-          colors={['transparent', 'rgba(0, 0, 0, 0.8)']}
-          style={styles.gradient}>
-          <MovieInfo
-            movieDetails={movieDetails}
-            onWatchTrailer={handleWatchTrailer}
-            onTicketSection={handleTicketSection}
-          />
-        </LinearGradient>
-      </ImageBackground>
-      <MovieDetails movieDetails={movieDetails} />
-    </ScrollView>
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.imageContainer}>
+          {imageLoading && (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color="#00AEEF" />
+            </View>
+          )}
+          <ImageBackground
+            source={{uri: imageUri}}
+            style={styles.movieImage}
+            onLoadEnd={() => setImageLoading(false)}
+            onError={() => setImageLoading(false)}>
+            <TopBar navigation={navigation} />
+            <LinearGradient
+              colors={['transparent', 'rgba(0, 0, 0, 0.8)']}
+              style={styles.gradient}>
+              <MovieInfo
+                movieDetails={movieDetails}
+                onWatchTrailer={handleWatchTrailer}
+                onTicketSection={handleTicketSection}
+              />
+            </LinearGradient>
+          </ImageBackground>
+        </View>
+        <MovieDetails movieDetails={movieDetails} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -214,9 +241,15 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
+  imageContainer: {
+    width: width,
+    height: 500,
+    backgroundColor: '#333', // Added solid background to improve shadow efficiency
+  },
   topBar: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     padding: 16,
   },
   backButton: {
@@ -227,8 +260,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   movieImage: {
-    width: width,
-    height: 500,
+    flex: 1,
     justifyContent: 'flex-end',
   },
   gradient: {
@@ -339,6 +371,12 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 20,
     color: 'red',
+  },
+  loaderContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Loader background
   },
 });
 

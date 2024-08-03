@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -31,37 +32,39 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({title, onSearchSubmit}) => {
   };
 
   return (
-    <View style={styles.headerContainer}>
-      {isSearching ? (
-        <View style={styles.searchContainer}>
-          <Icon
-            name="search-outline"
-            size={20}
-            color="#4D4D4D"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="TV shows, movies and more"
-            placeholderTextColor="#888888"
-            value={searchQuery}
-            onChangeText={handleSearchChange}
-            onSubmitEditing={handleSearchSubmit}
-            autoFocus={true}
-          />
-          <TouchableOpacity onPress={handleSearchToggle}>
-            <Icon name="close-outline" size={20} color="#4D4D4D" />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.titleContainer}>
-          <Text style={styles.headerTitle}>{title}</Text>
-          <TouchableOpacity onPress={handleSearchToggle}>
-            <Icon name="search-outline" size={24} color="#4D4D4D" />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+    <SafeAreaView>
+      <View style={styles.headerContainer}>
+        {isSearching ? (
+          <View style={styles.searchContainer}>
+            <Icon
+              name="search-outline"
+              size={20}
+              color="#4D4D4D"
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="TV shows, movies and more"
+              placeholderTextColor="#888888"
+              value={searchQuery}
+              onChangeText={handleSearchChange}
+              onSubmitEditing={handleSearchSubmit}
+              autoFocus={true}
+            />
+            <TouchableOpacity onPress={handleSearchToggle}>
+              <Icon name="close-outline" size={20} color="#4D4D4D" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.titleContainer}>
+            <Text style={styles.headerTitle}>{title}</Text>
+            <TouchableOpacity onPress={handleSearchToggle}>
+              <Icon name="search-outline" size={24} color="#4D4D4D" />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -69,16 +70,17 @@ const TicketSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.movieTitle}>The King’s Man</Text>
-        <Text style={styles.subtitle}>In Theaters December 22, 2021</Text>
-      </View>
-
+      <SafeAreaView>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Icon name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.movieTitle}>The King’s Man</Text>
+          <Text style={styles.subtitle}>In Theaters December 22, 2021</Text>
+        </View>
+      </SafeAreaView>
       <View style={styles.dateContainer}>
         <Text style={styles.sectionTitle}>Date</Text>
         <View style={styles.dateTabs}>
@@ -159,7 +161,7 @@ const TicketSelectionScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    // backgroundColor: '#f8f8f8',
   },
   header: {
     alignItems: 'center',

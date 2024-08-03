@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -92,18 +93,19 @@ const SeatSelectionScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}>
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.movieTitle}>The King’s Man</Text>
-        <Text style={styles.subtitle}>
-          {date} | {showtime.time} Hall 1
-        </Text>
-      </View>
-
+      <SafeAreaView>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
+            <Icon name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.movieTitle}>The King’s Man</Text>
+          <Text style={styles.subtitle}>
+            {date} | {showtime.time} Hall 1
+          </Text>
+        </View>
+      </SafeAreaView>
       <ScrollView contentContainerStyle={styles.seatSelectionContainer}>
         <Text style={styles.screenText}>SCREEN</Text>
 

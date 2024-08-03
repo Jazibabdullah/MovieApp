@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -51,10 +52,14 @@ const MovieSearchScreen = () => {
   };
 
   const handleMoviePress = (movie: any) => {
-    navigation.navigate('MovieDetailScreen', {movie});
+    navigation.navigate('MovieDetailScreen', {movie: movie});
   };
 
   const moviesToDisplay = query.trim() === '' ? popularMovies : searchResults;
+
+  const isSearching = query.trim() !== '';
+  const numColumns = isSearching ? 1 : 2;
+  const listKey = isSearching ? 'searchList' : 'popularList';
 
   if (loading) {
     return (
@@ -74,17 +79,19 @@ const MovieSearchScreen = () => {
 
   return (
     <View style={styles.screenContainer}>
-      <CustomHeader title="Search" onSearchSubmit={handleSearchSubmit} />
-
+      <SafeAreaView>
+        <CustomHeader title="Search" onSearchSubmit={handleSearchSubmit} />
+      </SafeAreaView>
       <FlatList
         data={moviesToDisplay}
+        key={listKey}
         keyExtractor={item => item.id.toString()}
-        numColumns={query.trim() === '' ? 2 : 1} // Show two columns for popular movies
+        numColumns={numColumns}
         renderItem={({item}) =>
-          query.trim() === '' ? (
-            <PopularMovieCard movie={item} onPress={handleMoviePress} />
-          ) : (
+          isSearching ? (
             <SearchMovieCard movie={item} onPress={handleMoviePress} />
+          ) : (
+            <PopularMovieCard movie={item} onPress={handleMoviePress} />
           )
         }
         contentContainerStyle={styles.listContentContainer}

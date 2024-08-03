@@ -9,6 +9,7 @@ import {
   Dimensions,
   ImageBackground,
   Text,
+  StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {FETCH_UPCOMING_MOVIES_REQUEST} from '../Redux/Actions/types';
@@ -62,39 +63,45 @@ const WatchScreen = () => {
   }
 
   return (
-    <View style={styles.screenContainer}>
-      <CustomHeader title="Watch" onSearchSubmit={handleSearchSubmit} />
-      <FlatList
-        data={filteredMovies} // Use the filtered movies here
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => {
-          const imageUri = item.poster_path
-            ? `${BASE_IMAGE_URL}${item.poster_path}`
-            : 'https://via.placeholder.com/300';
+    <>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <View style={styles.screenContainer}>
+        <CustomHeader title="Watch" onSearchSubmit={handleSearchSubmit} />
+        <FlatList
+          data={filteredMovies} // Use the filtered movies here
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item}) => {
+            const imageUri = item.poster_path
+              ? `${BASE_IMAGE_URL}${item.poster_path}`
+              : 'https://via.placeholder.com/300';
 
-          return (
-            <TouchableOpacity
-              style={styles.movieContainer}
-              onPress={() =>
-                navigation.navigate('MovieDetailScreen', {movie: item})
-              }>
-              <ImageBackground
-                source={{uri: imageUri}}
-                style={styles.movieImage}
-                imageStyle={styles.imageStyle} // Apply image styles
-              >
-                <LinearGradient
-                  colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
-                  style={styles.gradient}>
-                  <Text style={styles.movieTitle}>{item.title}</Text>
-                </LinearGradient>
-              </ImageBackground>
-            </TouchableOpacity>
-          );
-        }}
-        contentContainerStyle={styles.listContentContainer}
-      />
-    </View>
+            return (
+              <TouchableOpacity
+                style={styles.movieContainer}
+                onPress={() =>
+                  // navigation.navigate('MovieDetailScreen', {movie: item})
+                  navigation.navigate('MovieDetailScreen', {
+                    movie: item,
+                  })
+                }>
+                <ImageBackground
+                  source={{uri: imageUri}}
+                  style={styles.movieImage}
+                  imageStyle={styles.imageStyle} // Apply image styles
+                >
+                  <LinearGradient
+                    colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
+                    style={styles.gradient}>
+                    <Text style={styles.movieTitle}>{item.title}</Text>
+                  </LinearGradient>
+                </ImageBackground>
+              </TouchableOpacity>
+            );
+          }}
+          contentContainerStyle={styles.listContentContainer}
+        />
+      </View>
+    </>
   );
 };
 
